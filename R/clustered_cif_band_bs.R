@@ -1,14 +1,15 @@
 
-clustered_cif_band_bs <- function(CIF, CIF_boot, x, range_lower, range_upper, nc){
+clustered_cif_band_bs <- function(CIF, CIF_boot, range_lower, range_upper, nc){
 
+  x <- CIF$x
   range <- (x >= range_lower) & (x <= range_upper)
 
-  cif_x <- CIF
+  cif_x <- CIF$CIF
   V_cif_x <- apply(CIF_boot, 2, var)
   qEP_x <- cif_x * log(cif_x) / sqrt(V_cif_x)
   qHW_x <- cif_x * log(cif_x) / (1 + V_cif_x)
 
-  W_t <- sqrt(nc)* (t(CIF_boot)-CIF)
+  W_t <- sqrt(nc)* (t(CIF_boot)-CIF$CIF)
 
   B_t_EP <- abs(qEP_x[range] / (log(cif_x[range]) * cif_x[range]) * W_t[range,])
   B_t_EP <- apply(B_t_EP, 2, max, na.rm = TRUE)

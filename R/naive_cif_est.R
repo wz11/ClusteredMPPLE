@@ -18,5 +18,6 @@ naive_cif_est <- function(est1, est2, cause, t, ...){
   CIF_function <- stepfun(time, c(0, CIF_l))
 
   CIF <- CIF_function(t)
-  return(CIF)
+  out <- list(x = t, CIF = CIF)
+  return(out)
 }
