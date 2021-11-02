@@ -11,7 +11,7 @@ clustered_res_band <- function(crp, crp_boot, t, range_lower, range_upper, nc){
   ca <- as.numeric(quantile(B_t_EP, 0.95, na.rm = TRUE)) / sqrt(nc)
 
   p.value <- mean(B_t_EP > max(abs(crp)))
-  out <- list(ca = ca, p.value = p.value)
+  out <- list(ca = ca, p.value = p.value, range_r = range_r)
   return(out)
 
 }

@@ -5,7 +5,7 @@ clustered_cif_band_bs <- function(CIF, CIF_boot, range_lower, range_upper, nc){
   range <- (x >= range_lower) & (x <= range_upper)
 
   cif_x <- CIF$CIF
-  V_cif_x <- apply(CIF_boot, 2, var)
+  V_cif_x <- apply(CIF_boot, 2, stats::var)
   qEP_x <- cif_x * log(cif_x) / sqrt(V_cif_x)
   qHW_x <- cif_x * log(cif_x) / (1 + V_cif_x)
 
@@ -25,6 +25,6 @@ clustered_cif_band_bs <- function(CIF, CIF_boot, range_lower, range_upper, nc){
   LB_HW <- exp(-exp(log(-log(cif_x)) - ca_HW/(sqrt(nc) * qHW_x)))
   UB_HW <- exp(-exp(log(-log(cif_x)) + ca_HW/(sqrt(nc) * qHW_x)))
 
-  out <- list(LB_EP=LB_EP,UB_EP=UB_EP,LB_HW=LB_HW,UB_HW=UB_HW)
+  out <- list(LB_EP=LB_EP,UB_EP=UB_EP,LB_HW=LB_HW,UB_HW=UB_HW,range=range)
   return(out)
 }
