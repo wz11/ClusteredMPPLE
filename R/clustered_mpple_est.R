@@ -72,7 +72,6 @@ naive_mpple_est <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x
   time <- Haz$time
   H <- Haz$hazard
 
-
   cum_residual_process <- function(t){
     sum(data$r*((data$x == t)*(data$c == cause) - data$yhat*(data$x == t)*(data$c > 0)) / (1*(w==FALSE)+data$clustersize*(w==TRUE))) / nc
   }
