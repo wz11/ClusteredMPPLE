@@ -1,7 +1,28 @@
 
-library(geepack)
-library(survival)
 
+
+#' Obtain coefficient estimates standard error using close form variance
+#'
+#' @description Obtain coefficient estimates standard error for semiparametric regression for competing risks data
+#' with missing cause of failure using close form variance.
+#' @author Wenxian Zhou, \email{wz11 at iu dot edu}
+#' @author Giorgos Bakoyannis, \email{gbakogia at iu dot edu}
+#'
+#' @param data a data frame in suitable format.
+#' @param formula1 a formula relating the response for \code{y} to a set of covariates.
+#' @param formula2 a formula relating the survival object \code{Surv(x, d)} to a set of covariates.
+#' @param cause 1 or 2, the cause of failure to be evaluated.
+#' @param w logical value: if TRUE, the estimation procedure is weighed by cluster size.
+#' @param ... for future methods.
+#'
+#' @return A list with components:
+#' \item{beta}{a vector of regression coefficients}
+#' \item{SE_B}{a vector of standard errors of regression coefficients}
+#' \item{time}{a vector of time}
+#' \item{H}{a vector of cumulative hazard function}
+#' \item{phi}{useful quantities for incluence function}
+#' \item{dphi}{useful quantities for incluence function}
+#'
 clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, cause = 1, w = TRUE, ...){
 
   n <- dim(data)[1]
@@ -11,7 +32,7 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
   data$y <- 1*(data$c==cause)
 
   model <- geepack::geeglm(formula1, family = "binomial", data = data, id = clusterid, weights = include, corstr = "independence")
-  data$yhat <- predict(model, data, type = "response")
+  data$yhat <- stats::predict(model, data, type = "response")
   omega <- t(model$geese$infls)[ ,-length(dim(model$geese$infls)[1])] * nc
 
   # weighted cox proportional hazard model
@@ -23,16 +44,16 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
   dt0$weight <- 1 - dt0$weight
   dt0$d <- 0
 
-  data1 <<- rbind(data, dt0)
-  data1$weight <<- data1$weight/(1*(w==FALSE)+data1$clustersize*(w==TRUE))
+  data1 <- rbind(data, dt0)
+  data1$weight <- data1$weight/(1*(w==FALSE)+data1$clustersize*(w==TRUE))
 
   mod <- survival::coxph(formula = formula2, weights = weight, data = data1)
-  beta <- coef(mod)
-  Haz <- basehaz(mod, centered = FALSE)
+  beta <- stats::coef(mod)
+  Haz <- survival::basehaz(mod, centered = FALSE)
   time <- Haz$time
   H <- Haz$hazard
 
-  H_b <- vcov(mod)*nc
+  H_b <- stats::vcov(mod)*nc
   data$w <- data$d*data$weight
   cov <- all.vars(formula2)[-c(1,2)]
 

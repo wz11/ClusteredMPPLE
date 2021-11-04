@@ -1,13 +1,23 @@
 Package: ClusteredMPPLE
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Semiparametric Marginal Regression for Clustered Competing Risks Data with Missing Cause of Failure
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Wenxian Zhou, Giorgos Bakoyannis
+Maintainer: Wenxian Zhou <wz11@iu.edu>
+Description: This package conducts semiparametric marginal regression for clustered competing risks data with missing cause of failure. It implements the proposed maximum partial pseudolikelihood estimation method by Zhou, W. et al.(2021) based on semiparametric marginal proportional cause-specific hazards model. 
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    survival,
+    geepack,
+    data.table,
+    sandwich,
+    extraDistr,
+    graphics,
+    grDevices,
+    stats,
+    utils
 Depends: 
     R (>= 2.10)
+RoxygenNote: 7.1.1
