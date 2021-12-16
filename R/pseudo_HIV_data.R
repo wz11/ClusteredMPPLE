@@ -4,7 +4,7 @@
 #' @description We generate sample HIV dataset for this package
 #'
 #' @docType data
-#' @format A data.frame with 9 columns
+#' @format A data.frame with 8 columns
 #'
 #' @source Simulated Data
 #' @examples

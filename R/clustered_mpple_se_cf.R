@@ -33,7 +33,7 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
 
   model <- geepack::geeglm(formula1, family = "binomial", data = data, id = clusterid, weights = include, corstr = "independence")
   data$yhat <- stats::predict(model, data, type = "response")
-  omega <- t(model$geese$infls)[ ,-length(dim(model$geese$infls)[1])] * nc
+  omega <- t(model$geese$infls)[ ,-(dim(model$geese$infls)[1])] * nc
 
   # weighted cox proportional hazard model
   data$d <- data$r*(data$c == cause) + (1-data$r)*(data$yhat > 0)

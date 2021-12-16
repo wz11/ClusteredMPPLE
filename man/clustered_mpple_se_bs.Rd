@@ -6,10 +6,8 @@
 \usage{
 clustered_mpple_se_bs(
   data,
-  formula11 = y ~ x + Z1 + Z2,
-  formula12 = y ~ x + Z1 + Z2,
-  formula21 = Surv(x, d) ~ Z1 + Z2,
-  formula22 = Surv(x, d) ~ Z1 + Z2,
+  formula1 = y ~ x + Z1 + Z2,
+  formula2 = Surv(x, d) ~ Z1 + Z2,
   w = TRUE,
   nboot = 1000,
   x,
@@ -20,13 +18,9 @@ clustered_mpple_se_bs(
 \arguments{
 \item{data}{a data frame in suitable format.}
 
-\item{formula11}{a formula relating the response for cause 1 \code{y} to a set of covariates.}
+\item{formula1}{a formula relating the response for cause 1 \code{y} to a set of covariates.}
 
-\item{formula12}{a formula relating the response for cause 1 \code{y} to a set of covariates.}
-
-\item{formula21}{a formula relating the survival object \code{Surv(x, d)} to a set of covariates.}
-
-\item{formula22}{a formula relating the survival object \code{Surv(x, d)} to a set of covariates.}
+\item{formula2}{a formula relating the survival object \code{Surv(x, d)} to a set of covariates.}
 
 \item{w}{logical value: if TRUE, the estimation procedure is weighed by cluster size.}
 

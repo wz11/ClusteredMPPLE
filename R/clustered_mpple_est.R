@@ -21,10 +21,11 @@
 #'
 
 
-clustered_mpple_est <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, cause = 1, w = TRUE, t, ...){
+clustered_mpple_est <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, cause = 1, w = TRUE, t,...){
 
   n <- dim(data)[1]
   nc <- length(unique(data$clusterid))
+
 
   data$include <- 1*(data$r==1 & data$c>0)/(1*(w==FALSE)+data$clustersize*(w==TRUE))
   data$y <- 1*(data$c==cause)
@@ -42,7 +43,7 @@ clustered_mpple_est <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Su
   dt0$d <- 0
 
   data1 <<- rbind(data, dt0)
-  data1$weight <<- data1$weight/(1*(w==FALSE)+data1$clustersize*(w==TRUE))
+  data1$weight <- data1$weight/(1*(w==FALSE)+data1$clustersize*(w==TRUE))
 
   mod <- survival::coxph(formula = formula2, weights = weight, data = data1)
   beta <- stats::coef(mod)

@@ -5,7 +5,7 @@
 \alias{simulated_data}
 \title{simulated_data data set}
 \format{
-A data.frame with 7 columns
+A data.frame with 6 columns
 }
 \source{
 Simulated Data

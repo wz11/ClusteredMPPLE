@@ -5,7 +5,7 @@
 \alias{pseudo_HIV_data}
 \title{pseudo_HIV_data data set}
 \format{
-A data.frame with 9 columns
+A data.frame with 8 columns
 }
 \source{
 Simulated Data

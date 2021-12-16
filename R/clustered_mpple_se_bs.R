@@ -8,10 +8,8 @@
 #' @author Giorgos Bakoyannis, \email{gbakogia at iu dot edu}
 #'
 #' @param data a data frame in suitable format.
-#' @param formula11 a formula relating the response for cause 1 \code{y} to a set of covariates.
-#' @param formula12 a formula relating the response for cause 1 \code{y} to a set of covariates.
-#' @param formula21 a formula relating the survival object \code{Surv(x, d)} to a set of covariates.
-#' @param formula22 a formula relating the survival object \code{Surv(x, d)} to a set of covariates.
+#' @param formula1 a formula relating the response for cause 1 \code{y} to a set of covariates.
+#' @param formula2 a formula relating the survival object \code{Surv(x, d)} to a set of covariates.
 #' @param w logical value: if TRUE, the estimation procedure is weighed by cluster size.
 #' @param nboot a number of bootstrap samples for estimating variances when bootstrapping methods are used.
 #' @param x a vector of time points for cumulative incidence function.
@@ -23,10 +21,10 @@
 #' \item{se2}{a list of bootstrap samples for cause 1}
 #'
 
-clustered_mpple_se_bs <- function(data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y ~ x + Z1 + Z2, formula21 = Surv(x, d) ~ Z1 + Z2, formula22 = Surv(x, d) ~ Z1 + Z2, w = TRUE, nboot = 1000, x, t,...){
+clustered_mpple_se_bs <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, w = TRUE, nboot = 1000, x, t,...){
 
-  b1 <- length(all.vars(formula21)) - 2
-  b2 <- length(all.vars(formula22)) - 2
+  b1 <- length(all.vars(formula2)) - 2
+  b2 <- length(all.vars(formula2)) - 2
   clusterid <- as.vector(unique(data$clusterid))
   nc <- length(unique(data$clusterid))
 
@@ -44,8 +42,8 @@ clustered_mpple_se_bs <- function(data, formula11 =  y ~ x + Z1 + Z2, formula12 
     cluster <- sample(clusterid, nc, replace = TRUE)
     data_temp <- data.table::rbindlist(lapply(cluster, function(x) data[data$clusterid == x,]))
 
-    result_temp1 <- clustered_mpple_est(data = data_temp, formula1 =  formula11, formula2 = formula21, cause = 1, w = TRUE, t = t)
-    result_temp2 <- clustered_mpple_est(data = data_temp, formula1 =  formula12, formula2 = formula22, cause = 2, w = TRUE, t = t)
+    result_temp1 <- clustered_mpple_est(data = data_temp, formula1 =  formula1, formula2 = formula2, cause = 1, w = w, t = t)
+    result_temp2 <- clustered_mpple_est(data = data_temp, formula1 =  formula1, formula2 = formula2, cause = 2, w = w, t = t)
 
     cif_temp1 <- clustered_cif_est(est1 = result_temp1, est2 = result_temp2, cause = 1, t=x)$CIF
     cif_temp2 <- clustered_cif_est(est1 = result_temp1, est2 = result_temp2, cause = 2, t=x)$CIF

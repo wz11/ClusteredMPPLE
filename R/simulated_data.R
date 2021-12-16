@@ -4,7 +4,7 @@
 #' @description We simulated a sample dataset with 50 cluster size for this package
 #'
 #' @docType data
-#' @format A data.frame with 7 columns
+#' @format A data.frame with 6 columns
 #'
 #' @source Simulated Data
 #' @examples

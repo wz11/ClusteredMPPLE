@@ -30,12 +30,11 @@ An object of class \code{cif.ccr_smreg} with components:
 \dontrun{
 library(survival)
 data("simulated_data")
-fit <- ccr_smreg(data=simulated_data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y ~ x + Z1 + Z2,
-formula21 = Surv(x, d) ~ Z1 + Z2, formula22 = Surv(x, d) ~ Z1 + Z2,
-w = TRUE, var.method = "BS", nboot = 100)
+fit <- ccr_smreg(data=simulated_data, formula1 =  y ~ x + Z1 + Z2,
+formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = "BS", nboot = 100)
 ## Continuing the ccr_smreg(...) example
 pfit <- cif.ccr_smreg(object = fit, band = TRUE, sims = 1000)
-plot(pfit, xlim=c(0.2,1))
+plot(pfit)
 }
 }
 \author{

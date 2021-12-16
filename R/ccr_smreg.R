@@ -7,11 +7,9 @@
 #' @author Giorgos Bakoyannis, \email{gbakogia at iu dot edu}
 #'
 #' @param data a data frame in suitable format.
-#' @param formula11 a formula relating the response for cause 1 \code{y} to a set of covariates.
-#' @param formula12 a formula relating the response for cause 1 \code{y} to a set of covariates.
-#' @param formula21 a formula relating the survival object \code{Surv(x, d)} to a set of covariates.
-#' @param formula22 a formula relating the survival object \code{Surv(x, d)} to a set of covariates.
-#' @param w logical value: if TRUE, the estimation procedure is weighed by cluster size.
+#' @param formula1 a formula relating the response \code{y} to a set of covariates.
+#' @param formula2 a formula relating the survival object \code{Surv(x, d)} to a set of covariates.
+#' @param ics.weight logical value: if TRUE, the estimation procedure is weighed by cluster size.
 #' @param var.method a character string specifying the method for variance calcultaion. If None, the variance will
 #' not be calculated; If CF, the close form variance will be used; If BS, the bootstrapping methods will be
 #' used.
@@ -41,18 +39,17 @@
 #' library(survival)
 #' library(ClusteredMPPLE)
 #' data("simulated_data")
-#' fit <- ccr_smreg(data=simulated_data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y ~ x + Z1 + Z2,
-#' formula21 = Surv(x, d) ~ Z1 + Z2, formula22 = Surv(x, d) ~ Z1 + Z2,
-#' w = TRUE, var.method = "BS", nboot = 10)
+#' fit <- ccr_smreg(data=simulated_data, formula1 =  y ~ x + Z1 + Z2,
+#' formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = "BS", nboot = 10)
 #' summary(fit)
 #' }
 #' @export
-ccr_smreg <- function(data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y ~ x + Z1 + Z2, formula21 = Surv(x, d) ~ Z1 + Z2, formula22 = Surv(x, d) ~ Z1 + Z2, w = TRUE, var.method = c("None", "CF", "BS"), nboot = 1, ...){
+ccr_smreg <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = c("None", "CF", "BS"), nboot = 1, ...){
   UseMethod("ccr_smreg")
 }
 
 #' @export
-ccr_smreg.default <- function(data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y ~ x + Z1 + Z2, formula21 = Surv(x, d) ~ Z1 + Z2, formula22 = Surv(x, d) ~ Z1 + Z2, w = TRUE, var.method = c("None", "BS", "CF"), nboot = 1, ...){
+ccr_smreg.default <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = c("None", "CF", "BS"), nboot = 1, ...){
   nc <- length(unique(data$clusterid))
   x <-  sort(unique(data$x))
   t <- sort(unique(data$x[data$c>0 & data$r==1]))
@@ -60,9 +57,11 @@ ccr_smreg.default <- function(data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y
   Q9 <- as.numeric(stats::quantile(data$x[data$c > 0], 0.9))
   q1 <- as.numeric(stats::quantile(t, 0.1))
   q9 <- as.numeric(stats::quantile(t, 0.9))
+  npc <- as.vector(table(data$clusterid))
+  data$clustersize <- rep(npc, npc)
 
-  est1 <- clustered_mpple_est(data, formula11, formula21, cause = 1, w = w, t = t)
-  est2 <- clustered_mpple_est(data, formula12, formula22, cause = 2, w = w, t = t)
+  est1 <- clustered_mpple_est(data, formula1, formula2, cause = 1, w = ics.weight, t = t)
+  est2 <- clustered_mpple_est(data, formula1, formula2, cause = 2, w = ics.weight, t = t)
 
   var.method <- match.arg(var.method, c("None", "CF", "BS"))
 
@@ -71,15 +70,15 @@ ccr_smreg.default <- function(data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y
     se2 <- NA
   } else if (var.method == "BS"){
     message("please wait...")
-    se <- clustered_mpple_se_bs(data, formula11, formula12, formula21, formula22, w = w, nboot = nboot, x = x, t = t)
+    se <- clustered_mpple_se_bs(data, formula1, formula2, w = ics.weight, nboot = nboot, x = x, t = t)
     se1 <- se[[1]]
     se2 <- se[[2]]
   } else if (var.method == "CF"){
     message("please wait...")
-    se1 <- clustered_mpple_se_cf(data, formula11, formula21, cause = 1, w = w)
-    se2 <- clustered_mpple_se_cf(data, formula12, formula22, cause = 2, w = w)
+    se1 <- clustered_mpple_se_cf(data, formula1, formula2, cause = 1, w = ics.weight)
+    se2 <- clustered_mpple_se_cf(data, formula1, formula2, cause = 2, w = ics.weight)
   }
-  formula <- list(formula11 = formula11, formula12 = formula12, formula21 = formula21, formula22 = formula22)
+  formula <- list(formula1 = formula1, formula2 = formula2)
   out <- list(est1 = est1, est2 = est2, se1 = se1, se2 = se2, formula = formula, x = x, t = t, Q1 = Q1, Q9 = Q9, q1 = q1, q9 = q9, nc = nc)
   class(out) <- "ccr_smreg"
   attr(out, "var.method") <- var.method
@@ -123,10 +122,10 @@ summary.ccr_smreg <- function(object,...){
 
   if (var.method == "None"){
     cause1 <- cbind(beta1, hr1)
-    row.names(cause1) <- all.vars(object$formula$formula21)[-c(1,2)]
+    row.names(cause1) <- all.vars(object$formula$formula2)[-c(1,2)]
     colnames(cause1) <- c("beta", "exp(beta)")
     cause2 <- cbind(beta2, hr2)
-    row.names(cause2) <- all.vars(object$formula$formula22)[-c(1,2)]
+    row.names(cause2) <- all.vars(object$formula$formula2)[-c(1,2)]
     colnames(cause2) <- c("beta", "exp(beta)")
     out <- list(cause1, cause2)
   } else if (var.method == "CF"){
@@ -139,10 +138,10 @@ summary.ccr_smreg <- function(object,...){
     CI_upper1 <- exp(beta1 + 1.96*se1)
     CI_upper2 <- exp(beta2 + 1.96*se2)
     cause1 <- cbind(beta1, se1, p.value1, hr1, CI_lower1, CI_upper1)
-    row.names(cause1) <- all.vars(object$formula$formula21)[-c(1,2)]
+    row.names(cause1) <- all.vars(object$formula$formula2)[-c(1,2)]
     colnames(cause1) <- c("beta", "se", "p-value", "exp(beta)", "95% CI lower limit", "95% CI upper limit")
     cause2 <- cbind(beta2, se2, p.value2, hr2, CI_lower2, CI_upper2)
-    row.names(cause2) <- all.vars(object$formula$formula22)[-c(1,2)]
+    row.names(cause2) <- all.vars(object$formula$formula2)[-c(1,2)]
     colnames(cause2) <- c("beta", "se", "p-value", "exp(beta)", "95% CI lower limit", "95% CI upper limit")
     out <- list(cause1 = cause1, cause2 = cause2)
   } else if (var.method == "BS"){
@@ -155,10 +154,10 @@ summary.ccr_smreg <- function(object,...){
     CI_upper1 <- exp(beta1 + 1.96*se1)
     CI_upper2 <- exp(beta2 + 1.96*se2)
     cause1 <- cbind(beta1, se1, p.value1, hr1, CI_lower1, CI_upper1)
-    row.names(cause1) <- all.vars(object$formula$formula21)[-c(1,2)]
+    row.names(cause1) <- all.vars(object$formula$formula2)[-c(1,2)]
     colnames(cause1) <- c("beta", "se", "p-value", "exp(beta)", "95% CI lower limit", "95% CI upper limit")
     cause2 <- cbind(beta2, se2, p.value2, hr2, CI_lower2, CI_upper2)
-    row.names(cause2) <- all.vars(object$formula$formula22)[-c(1,2)]
+    row.names(cause2) <- all.vars(object$formula$formula2)[-c(1,2)]
     colnames(cause2) <- c("beta", "se", "p-value", "exp(beta)", "95% CI lower limit", "95% CI upper limit")
     out <- list(cause1 = cause1, cause2 = cause2)
   }

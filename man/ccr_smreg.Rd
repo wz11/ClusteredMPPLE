@@ -6,11 +6,9 @@
 \usage{
 ccr_smreg(
   data,
-  formula11 = y ~ x + Z1 + Z2,
-  formula12 = y ~ x + Z1 + Z2,
-  formula21 = Surv(x, d) ~ Z1 + Z2,
-  formula22 = Surv(x, d) ~ Z1 + Z2,
-  w = TRUE,
+  formula1 = y ~ x + Z1 + Z2,
+  formula2 = Surv(x, d) ~ Z1 + Z2,
+  ics.weight = TRUE,
   var.method = c("None", "CF", "BS"),
   nboot = 1,
   ...
@@ -19,15 +17,11 @@ ccr_smreg(
 \arguments{
 \item{data}{a data frame in suitable format.}
 
-\item{formula11}{a formula relating the response for cause 1 \code{y} to a set of covariates.}
+\item{formula1}{a formula relating the response \code{y} to a set of covariates.}
 
-\item{formula12}{a formula relating the response for cause 1 \code{y} to a set of covariates.}
+\item{formula2}{a formula relating the survival object \code{Surv(x, d)} to a set of covariates.}
 
-\item{formula21}{a formula relating the survival object \code{Surv(x, d)} to a set of covariates.}
-
-\item{formula22}{a formula relating the survival object \code{Surv(x, d)} to a set of covariates.}
-
-\item{w}{logical value: if TRUE, the estimation procedure is weighed by cluster size.}
+\item{ics.weight}{logical value: if TRUE, the estimation procedure is weighed by cluster size.}
 
 \item{var.method}{a character string specifying the method for variance calcultaion. If None, the variance will
 not be calculated; If CF, the close form variance will be used; If BS, the bootstrapping methods will be
@@ -60,9 +54,8 @@ This function \code{ccr_smreg} conducts semiparametric marginal regression for c
 library(survival)
 library(ClusteredMPPLE)
 data("simulated_data")
-fit <- ccr_smreg(data=simulated_data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y ~ x + Z1 + Z2,
-formula21 = Surv(x, d) ~ Z1 + Z2, formula22 = Surv(x, d) ~ Z1 + Z2,
-w = TRUE, var.method = "BS", nboot = 10)
+fit <- ccr_smreg(data=simulated_data, formula1 =  y ~ x + Z1 + Z2,
+formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = "BS", nboot = 10)
 summary(fit)
 }
 }
