@@ -47,7 +47,7 @@ An object of class \code{ccr_smreg} with components:
 \item{nc}{number of clusters}
 }
 \description{
-This function \code{ccr_smreg} conducts semiparametric marginal regression for clustered competing risks data with missing cause of failure. It implements the proposed maximum partial pseudolikelihood estimation method by Zhou, W. et al.(2021) based on semiparametric marginal proportional cause-specific hazards model. The standard errors for the estimated regression coefficients are calculated based on the close-form variance or bootstrapping.
+This function \code{ccr_smreg} conducts semiparametric marginal regression for clustered competing risks data with missing cause of failure. It implements the proposed maximum partial pseudolikelihood estimation method by Zhou et al.(2021) based on semiparametric marginal proportional cause-specific hazards model. The standard errors for the estimated regression coefficients are calculated based on the close-form variance or bootstrapping.
 }
 \examples{
 \dontrun{
@@ -61,7 +61,7 @@ summary(fit)
 }
 \references{
 {Zhou, W., Bakoyannis, G., Zhang, Y., & Yiannoutsos, C. T. (2021). Semiparametric Marginal Regression for
-Clustered Competing Risks Data with Missing Cause of Failure. arXiv preprint arXiv:2104.09090.}
+Clustered Competing Risks Data with Missing Cause of Failure. arXiv preprint arXiv:2104.09090.(https://arxiv.org/abs/2104.09090)}
 }
 \author{
 Wenxian Zhou, \email{wz11 at iu dot edu}
