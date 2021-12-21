@@ -74,22 +74,27 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
   E <- sapply(data$x, E_t, simplify = TRUE)
   dM <- sapply(data$x, dM_t, simplify = TRUE) #Each column corresponds to a t
 
-  psi_n <- sapply(1:n, FUN=function(x){colSums(t((as.vector(t(data[x,cov]))-E))*dM[x,])})
+  if (length(cov)==1){
+    ZE <- sapply(data$x, ZE_t, simplify = TRUE)
+    psi_j <- as.vector(tapply(rowSums(ZE * dM), data$clusterid, mean))
 
-  psi_j <- sapply(1:length(cov),FUN=function(x){as.vector(tapply(psi_n[x,], data$clusterid, mean))})
-
+  }else{
+    psi_n <- sapply(1:n, FUN=function(x){colSums(t((as.vector(t(data[x,cov]))-E))*dM[x,])})
+    psi_j <- sapply(1:length(cov),FUN=function(x){as.vector(tapply(psi_n[x,], data$clusterid, mean))})
+  }
 
   data$one <- 1
   logcovs <- c("one",  all.vars(formula1)[-1])
   COV <- data[ ,logcovs]
 
   if (length(cov)==1){
-    R_ij <-  as.matrix((1 - data$r)*(data[ ,cov] - t(E))*(data$c > 0)) %*% as.matrix(data$yhat*(1 - data$yhat)*COV/(1*(w==FALSE)+data$clustersize*(w==TRUE)))
+    R_ij <-  (1 - data$r)*(data[ ,cov] - E)*(data$c > 0)* data$yhat*(1 - data$yhat)*COV
+    R_j <- as.vector(rowMeans(sapply(1:nc, FUN = function(x){colMeans(R_ij[data$clusterid==x,])}, simplify = TRUE)))
   }else{
     R_ij <-  t((1 - data$r)*(data[ ,cov] - t(E))*(data$c > 0)) %*% as.matrix(data$yhat*(1 - data$yhat)*COV/(1*(w==FALSE)+data$clustersize*(w==TRUE)))
+    R_j <- t(R_ij/nc)
   }
 
-  R_j <- t(R_ij/nc)
   psi <- (psi_j + omega %*% R_j) %*% H_b
 
   m_psi2 <- t(psi) %*% psi/ nc
