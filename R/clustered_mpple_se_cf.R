@@ -105,7 +105,7 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
   phi_t <- function(t){
     R_ij <- (1 - data$r)*((data$x <= t)/ar) * (data$c > 0) * (data$yhat * (1 - data$yhat) * COV)/(1*(w==FALSE)+data$clustersize*(w==TRUE))
     R_j <- colSums(R_ij)/nc
-    out <- as.vector(tapply(colSums(t(dM[ ,(data$x <= t)]) / ar[data$x <= t]), data$clusterid, mean)) - as.vector(psi %*% as.matrix(colSums((data$x <= t) * t(E) * dH))) +
+    out <- as.vector(tapply(colSums(t(dM[ ,(data$x <= t)]) / ar[data$x <= t]), data$clusterid, mean)) - as.vector(psi %*% as.matrix(colSums(matrix((data$x <= t) * t(E) * dH, ncol = length(cov), nrow = n)))) +
       as.vector(omega %*% R_j)
     return(out)
   }
