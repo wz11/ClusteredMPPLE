@@ -83,7 +83,12 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
   logcovs <- c("one",  all.vars(formula1)[-1])
   COV <- data[ ,logcovs]
 
-  R_ij <-  t((1 - data$r)*(data[ ,cov] - t(E))*(data$c > 0)) %*% as.matrix(data$yhat*(1 - data$yhat)*COV/(1*(w==FALSE)+data$clustersize*(w==TRUE)))
+  if (length(cov)==1){
+    R_ij <-  as.matrix((1 - data$r)*(data[ ,cov] - t(E))*(data$c > 0)) %*% as.matrix(data$yhat*(1 - data$yhat)*COV/(1*(w==FALSE)+data$clustersize*(w==TRUE)))
+  }else{
+    R_ij <-  t((1 - data$r)*(data[ ,cov] - t(E))*(data$c > 0)) %*% as.matrix(data$yhat*(1 - data$yhat)*COV/(1*(w==FALSE)+data$clustersize*(w==TRUE)))
+  }
+
   R_j <- t(R_ij/nc)
   psi <- (psi_j + omega %*% R_j) %*% H_b
 
