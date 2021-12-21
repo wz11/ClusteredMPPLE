@@ -78,8 +78,9 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
 
   psi_j <- sapply(1:length(cov),FUN=function(x){as.vector(tapply(psi_n[x,], data$clusterid, mean))})
 
+
   data$one <- 1
-  logcovs <- c("one","x",cov)
+  logcovs <- c("one",  all.vars(formula1)[-1])
   COV <- data[ ,logcovs]
 
   R_ij <-  t((1 - data$r)*(data[ ,cov] - t(E))*(data$c > 0)) %*% as.matrix(data$yhat*(1 - data$yhat)*COV/(1*(w==FALSE)+data$clustersize*(w==TRUE)))
