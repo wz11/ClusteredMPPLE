@@ -53,7 +53,7 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
   time <- Haz$time
   H <- Haz$hazard
 
-  H_b <- stats::vcov(mod)*nc
+  H_b <- stats::vcov(mod)*n
   data$w <- data$d*data$weight
   cov <- all.vars(formula2)[-c(1,2)]
 
