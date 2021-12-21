@@ -75,6 +75,11 @@ clustered_mpple_se_cf <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = 
   dM <- sapply(data$x, dM_t, simplify = TRUE) #Each column corresponds to a t
 
   if (length(cov)==1){
+
+    ZE_t <- function(t){
+      data[ ,cov] - E_t(t)
+    }
+
     ZE <- sapply(data$x, ZE_t, simplify = TRUE)
     psi_j <- as.vector(tapply(rowSums(ZE * dM), data$clusterid, mean))
 
