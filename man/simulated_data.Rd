@@ -7,12 +7,12 @@
 \format{
 A data.frame with 6 columns:
 \describe{
-  \item{clusterid}{Cluster ID, 1 to number of clusters}
+  \item{clusterid}{Cluster ID, number from 1 to the number of clusters}
   \item{x}{Observed time}
   \item{c}{Cause of failure, 1 = cause 1, 2 = cause 2, 0 = right censoring}
   \item{r}{Missing indicator, 1 if observed, 0 if missing}
-  \item{Z1}{First covariate}
-  \item{Z2}{Second covariate}
+  \item{Z1}{Covariate Z1}
+  \item{Z2}{Covariate Z2}
 }
 }
 \source{

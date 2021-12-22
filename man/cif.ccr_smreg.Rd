@@ -31,7 +31,8 @@ An object of class \code{cif.ccr_smreg} with components:
 library(survival)
 data("simulated_data")
 fit <- ccr_smreg(data=simulated_data, formula1 =  y ~ x + Z1 + Z2,
-formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = "BS", nboot = 100)
+formula2 = Surv(x, d) ~ Z1 + Z2, cluster = "clusterid", ics.weight = TRUE,
+var.method = "BS", nboot = 100)
 ## Continuing the ccr_smreg(...) example
 pfit <- cif.ccr_smreg(object = fit, band = TRUE, sims = 1000)
 plot(pfit)

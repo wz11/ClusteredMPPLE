@@ -26,9 +26,9 @@ An object of class \code{crp.ccr_smreg} with components:
 \dontrun{
 library(survival)
 data("simulated_data")
-fit <- ccr_smreg(data=simulated_data, formula11 =  y ~ x + Z1 + Z2, formula12 =  y ~ x + Z1 + Z2,
-formula21 = Surv(x, d) ~ Z1 + Z2, formula22 = Surv(x, d) ~ Z1 + Z2,
-w = TRUE, var.method = "BS", nboot = 100)
+fit <- ccr_smreg(data=simulated_data, formula1 =  y ~ x + Z1 + Z2,
+formula2 = Surv(x, d) ~ Z1 + Z2, cluster = "clusterid", ics.weight = TRUE,
+var.method = "BS", nboot = 100)
 ## Continuing the ccr_smreg(...) example
 rfit <- crp.ccr_smreg(object = fit)
 plot(rfit)
