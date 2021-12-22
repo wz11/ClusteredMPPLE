@@ -9,6 +9,7 @@
 #' @param data a data frame in suitable format.
 #' @param formula1 a formula relating the response \code{y} to a set of covariates.
 #' @param formula2 a formula relating the survival object \code{Surv(x, d)} to a set of covariates.
+#' @param cluster variable name for cluster id
 #' @param ics.weight logical value: if TRUE, the estimation procedure is weighed by cluster size.
 #' @param var.method a character string specifying the method for variance calcultaion. If None, the variance will
 #' not be calculated; If CF, the close form variance will be used; If BS, the bootstrapping methods will be
@@ -40,16 +41,20 @@
 #' library(ClusteredMPPLE)
 #' data("simulated_data")
 #' fit <- ccr_smreg(data=simulated_data, formula1 =  y ~ x + Z1 + Z2,
-#' formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = "BS", nboot = 10)
+#' formula2 = Surv(x, d) ~ Z1 + Z2, cluster = "clusterid", ics.weight = TRUE,
+#' var.method = "BS", nboot = 10)
 #' summary(fit)
 #' }
 #' @export
-ccr_smreg <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = c("None", "CF", "BS"), nboot = 1, ...){
+ccr_smreg <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, cluster = "clusterid", ics.weight = TRUE, var.method = c("None", "CF", "BS"), nboot = 1, ...){
   UseMethod("ccr_smreg")
 }
 
 #' @export
-ccr_smreg.default <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, ics.weight = TRUE, var.method = c("None", "CF", "BS"), nboot = 1, ...){
+ccr_smreg.default <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv(x, d) ~ Z1 + Z2, cluster = "clusterid", ics.weight = TRUE, var.method = c("None", "CF", "BS"), nboot = 1, ...){
+
+  data$clusterid <- as.numeric(factor(data[,cluster]))
+  data <- data[order(data$clusterid),]
   nc <- length(unique(data$clusterid))
   x <-  sort(unique(data$x))
   t <- sort(unique(data$x[data$c>0 & data$r==1]))

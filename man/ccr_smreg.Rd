@@ -8,6 +8,7 @@ ccr_smreg(
   data,
   formula1 = y ~ x + Z1 + Z2,
   formula2 = Surv(x, d) ~ Z1 + Z2,
+  cluster = "clusterid",
   ics.weight = TRUE,
   var.method = c("None", "CF", "BS"),
   nboot = 1,
@@ -20,6 +21,8 @@ ccr_smreg(
 \item{formula1}{a formula relating the response \code{y} to a set of covariates.}
 
 \item{formula2}{a formula relating the survival object \code{Surv(x, d)} to a set of covariates.}
+
+\item{cluster}{variable name for cluster id}
 
 \item{ics.weight}{logical value: if TRUE, the estimation procedure is weighed by cluster size.}
 
