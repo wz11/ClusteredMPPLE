@@ -55,6 +55,7 @@ ccr_smreg.default <- function(data, formula1 =  y ~ x + Z1 + Z2, formula2 = Surv
 
   data$clusterid <- as.numeric(factor(data[,cluster]))
   data <- data[order(data$clusterid),]
+  data$r <- 1 - (data$c == 99)
   nc <- length(unique(data$clusterid))
   x <-  sort(unique(data$x))
   t <- sort(unique(data$x[data$c>0 & data$r==1]))

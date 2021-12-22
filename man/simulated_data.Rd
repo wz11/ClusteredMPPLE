@@ -5,12 +5,11 @@
 \alias{simulated_data}
 \title{simulated_data data set}
 \format{
-A data.frame with 6 columns:
+A data.frame with 5 columns:
 \describe{
   \item{clusterid}{Cluster ID, number from 1 to the number of clusters}
   \item{x}{Observed time}
-  \item{c}{Cause of failure, 1 = cause 1, 2 = cause 2, 0 = right censoring}
-  \item{r}{Missing indicator, 1 if observed, 0 if missing}
+  \item{c}{Cause of failure, 1 = cause 1, 2 = cause 2, 0 = right censoring, 99 = missing cause of failure}
   \item{Z1}{Covariate Z1}
   \item{Z2}{Covariate Z2}
 }
