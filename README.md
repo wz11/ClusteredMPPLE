@@ -45,10 +45,11 @@ data("pseudo_HIV_data")
 fit <- ccr_smreg(data = pseudo_HIV_data, 
                  formula1 =  y ~ x + Sex + Age + CD4 + HIV, 
                  formula2 =  Surv(x, d) ~ Sex + Age + CD4 + HIV,
+                 cluster = "clusterid",
                  ics.weight = TRUE, 
                  var.method = "BS", 
                  nboot = 1000)
-
+#> please wait...
 # Obtain model summary
 summary(fit)
 #> 
